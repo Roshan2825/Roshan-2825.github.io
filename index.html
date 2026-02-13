@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Be My Valentine ❤️</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    body{
+      height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      background: linear-gradient(135deg,#ff9a9e,#fecfef);
+      overflow:hidden;
+    }
+
+    /* ===== Floating hearts ===== */
+    .heart{
+      position:absolute;
+      animation: float 6s linear infinite;
+      opacity:0.6;
+      pointer-events:none;
+    }
+
+    @keyframes float{
+      from{ transform:translateY(100vh) scale(.5); }
+      to{ transform:translateY(-10vh) scale(1.2); }
+    }
+
+    /* ===== Card ===== */
+    .card{
+      background:white;
+      width:90%;
+      max-width:360px;
+      padding:25px;
+      border-radius:20px;
+      text-align:center;
+      box-shadow:0 15px 40px rgba(0,0,0,0.25);
+      position:relative;
+    }
+
+    h1{
+      color:#ff4d6d;
+      margin-bottom:10px;
+    }
+
+    p{
+      margin-bottom:15px;
+      font-size:15px;
+    }
+
+    /* ===== Slideshow ===== */
+    .slideshow{
+      height:200px;
+      border-radius:15px;
+      overflow:hidden;
+      margin-bottom:15px;
+    }
+
+    .slideshow img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:none;
+    }
+
+    /* ===== Buttons ===== */
+    button{
+      padding:10px 22px;
+      border:none;
+      border-radius:10px;
+      margin:8px;
+      font-size:16px;
+      cursor:pointer;
+    }
+
+    #yes{
+      background:#ff4d6d;
+      color:white;
+    }
+
+    #no{
+      position:absolute;
+      background:#ddd;
+      transition:0.15s;
+    }
+
+    #msg{
+      margin-top:15px;
+      color:#ff4d6d;
+      font-weight:bold;
+      display:none;
+      font-size:18px;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ===== Background Music ===== -->
+<audio id="bgMusic" loop>
+  <source src="assests\music\love.mp3" type="audio/mpeg">
+</audio>
+
+
+<div class="card">
+
+  <!-- 🔥 CHANGE NAME HERE -->
+  <h1>Hey Pondatii❤️</h1>
+
+  <!-- ===== Photos ===== -->
+  <div class="slideshow">
+    <img src="assests\images\1.jpg" class="slide">
+    <img src="assests/images/2.jpg" class="slide">
+    <img src="assests\images\3.jpg" class="slide">
+    <img src="assests\images\4.jpg" class="slide">
+  </div>
+
+  <p>
+    Every moment with you feels magical ✨<br>
+    Will you be my Valentine?
+  </p>
+
+  <button id="yes">Yes 💖</button>
+  <button id="no">No 😜</button>
+
+  <div id="msg">Yaaay!! I love you so much 🥰</div>
+
+</div>
+
+
+<!-- Confetti -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<script>
+/* ===============================
+   Slideshow
+================================*/
+let slides = document.querySelectorAll(".slide");
+let index = 0;
+
+function showSlide(){
+  slides.forEach(s => s.style.display="none");
+  slides[index].style.display="block";
+  index = (index+1) % slides.length;
+}
+
+showSlide();
+setInterval(showSlide, 2000);
+
+
+/* ===============================
+   Buttons Logic
+================================*/
+const card = document.querySelector(".card");
+const noBtn = document.getElementById("no");
+const yesBtn = document.getElementById("yes");
+const msg = document.getElementById("msg");
+
+/* Move NO randomly inside card */
+function moveNoButton(){
+  const rect = card.getBoundingClientRect();
+
+  const maxX = rect.width - 90;
+  const maxY = rect.height - 50;
+
+  const x = Math.random() * maxX;
+  const y = Math.random() * maxY;
+
+  noBtn.style.left = x + "px";
+  noBtn.style.top = y + "px";
+}
+
+/* Desktop — move when mouse near */
+card.addEventListener("mousemove", (e)=>{
+  const r = noBtn.getBoundingClientRect();
+
+  const dx = e.clientX - (r.left + r.width/2);
+  const dy = e.clientY - (r.top + r.height/2);
+
+  const distance = Math.sqrt(dx*dx + dy*dy);
+
+  if(distance < 80){
+    moveNoButton();
+  }
+});
+
+/* Mobile touch support */
+card.addEventListener("touchstart", moveNoButton);
+card.addEventListener("touchmove", moveNoButton);
+
+
+/* YES clicked */
+yesBtn.addEventListener("click", ()=>{
+  msg.style.display="block";
+  yesBtn.style.display="none";
+  noBtn.style.display="none";
+
+  confetti({
+    particleCount: 200,
+    spread: 120,
+    origin: { y: 0.6 }
+  });
+});
+
+
+/* ===============================
+   Floating Hearts
+================================*/
+setInterval(()=>{
+  const heart = document.createElement("div");
+  heart.className = "heart";
+  heart.innerHTML = "❤️";
+  heart.style.left = Math.random()*100 + "vw";
+  heart.style.fontSize = (15 + Math.random()*25) + "px";
+  document.body.appendChild(heart);
+
+  setTimeout(()=>heart.remove(),6000);
+},300);
+
+const music = document.getElementById("bgMusic");
+document.body.addEventListener("click", ()=>{
+    music.play();
+},{once:true});
+</script>
+
+</body>
+</html>
